@@ -1,7 +1,8 @@
-FROM scratch
+FROM alpine:3.8
 
+RUN apk add --no-cache ca-certificates
 ADD bin/certmon /bin/
-ADD bin/ca-certificates.crt /etc/ssl/certs/
 ADD assets /assets
+COPY init.sh /
 
-CMD ["certmon", "-config", "/config.yaml", "-listen", ":8082", "-ui", "/assets/index.html"]
+CMD ["sh", "init.sh"]
