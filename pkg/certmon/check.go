@@ -53,7 +53,15 @@ func checkEndpoint(hostname, endpoint string, warning int, critical int) (result
 		result.OK = true
 	}
 
-	result.Days = int(time.Now().Sub(result.Expiry).Hours()) / 24
+	if critical == 0 {
+		critical = 20
+	}
+
+	if warning == 0 {
+		warning = 45
+	}
+
+	result.Days = int(result.Expiry.Sub(time.Now()).Hours()) / 24
 	if result.Days < critical {
 		result.Status = "critical"
 	} else if result.Days < warning {
