@@ -19,12 +19,12 @@ func (c Config) Run() Results {
 func (c Check) Run() Result {
 	result := Result{Hostname: c.Hostname, Endpoints: make(map[string]IndividualResult), Timestamp: time.Now()}
 	for _, endpoint := range c.Endpoints {
-		result.Endpoints[endpoint] = checkEndpoint(c.Hostname, endpoint)
+		result.Endpoints[endpoint] = checkEndpoint(c.Hostname, endpoint, c.Warning, c.Critical)
 	}
 	return result
 }
 
-func checkEndpoint(hostname, endpoint string) (result IndividualResult) {
+func checkEndpoint(hostname, endpoint string, warning int, critical int) (result IndividualResult) {
 	//Can we dial?
 	result.Timestamp = time.Now()
 	dialer := &net.Dialer{Timeout: time.Minute}
@@ -52,5 +52,15 @@ func checkEndpoint(hostname, endpoint string) (result IndividualResult) {
 	if result.Expiry.After(time.Now()) {
 		result.OK = true
 	}
+
+	result.Days = int(time.Now().Sub(result.Expiry).Hours()) / 24
+	if result.Days < critical {
+		result.Status = "critical"
+	} else if result.Days < warning {
+		result.Status = "warning"
+	} else {
+		result.Status = "ok"
+	}
+
 	return result
 }

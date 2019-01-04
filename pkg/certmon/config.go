@@ -17,6 +17,8 @@ type Config struct {
 type Check struct {
 	Hostname  string   `yaml:"hostname"`  //The value in SNI and certificate will be validated against it.
 	Endpoints []string `yaml:"endpoints"` //IP or hostname to connect to. If blank then the Hostname will be used
+	Warning   int      `yaml:"warning"`   //expire days threshhold for warning
+	Critical  int      `yaml:"critical"`  //expire days threshhold for critical
 }
 
 //LoadConfig loads the config from yaml file
