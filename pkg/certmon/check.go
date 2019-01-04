@@ -62,5 +62,8 @@ func checkEndpoint(hostname, endpoint string, warning int, critical int) (result
 		result.Status = "ok"
 	}
 
+	result.Warn = warning
+	result.Crit = critical
+
 	return result
 }

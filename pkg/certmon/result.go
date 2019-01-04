@@ -22,6 +22,8 @@ type Result struct {
 type IndividualResult struct {
 	ConnectionState *tls.ConnectionState `json:"connectionstate"`
 	Expiry          time.Time            `json:"expiry"`
+	Warn            int                  `json: "threshwarn"`
+	Crit            int                  `json: "threshcrit"`
 	Days            int                  `json:"days"`
 	OK              bool                 `json:"ok"`
 	Status          string               `json:"status"`
