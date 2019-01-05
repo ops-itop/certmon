@@ -8,9 +8,12 @@ import (
 
 //Run runs the tests and generates result
 func (c Config) Run() Results {
-	results := Results{Results: make([]Result, len(c.Checks)), Timestamp: time.Now().UTC()}
+	results := Results{Results: make([]Result, len(c.Checks)), Timestamp: time.Now().UTC(), Summary: "All Certs OK"}
 	for i, check := range c.Checks {
 		results.Results[i] = check.Run()
+		if results.Results[i].Status != "ok" {
+			results.Summary = "Warning or Critical Found"
+		}
 	}
 	return results
 }
@@ -27,7 +30,6 @@ func (c Check) Run() Result {
 func checkEndpoint(hostname, endpoint string, warning int, critical int) (result IndividualResult) {
 	//Can we dial?
 	result.Timestamp = time.Now()
-	result.Summary = "All certs OK"
 	dialer := &net.Dialer{Timeout: time.Minute}
 	conn, err := tls.DialWithDialer(dialer, "tcp", net.JoinHostPort(endpoint, "443"), &tls.Config{ServerName: hostname})
 	if err != nil {
@@ -65,10 +67,8 @@ func checkEndpoint(hostname, endpoint string, warning int, critical int) (result
 	result.Days = int(result.Expiry.Sub(time.Now()).Hours()) / 24
 	if result.Days < critical {
 		result.Status = "critical"
-		result.Summary = "Critical Found"
 	} else if result.Days < warning {
 		result.Status = "warning"
-		result.Summary = "Warning Found"
 	} else {
 		result.Status = "ok"
 	}

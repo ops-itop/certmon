@@ -16,6 +16,7 @@ type Result struct {
 	Hostname  string                      `json:"hostname"` //The value in SNI and certificate will be validated against it.
 	Endpoints map[string]IndividualResult `json:"endpoints"`
 	Timestamp time.Time                   `json:"timestamp"`
+	Summary   string                      `json:"summary"`
 }
 
 //IndividualResult is the output of checking individual endpoint
@@ -29,5 +30,4 @@ type IndividualResult struct {
 	Status          string               `json:"status"`
 	Err             string               `json:"err"`
 	Timestamp       time.Time            `json:"timestamp"`
-	Summary         string               `json:"summary"`
 }
