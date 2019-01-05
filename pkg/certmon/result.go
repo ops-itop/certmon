@@ -29,4 +29,5 @@ type IndividualResult struct {
 	Status          string               `json:"status"`
 	Err             string               `json:"err"`
 	Timestamp       time.Time            `json:"timestamp"`
+	Summary         string               `json:"summary"`
 }
