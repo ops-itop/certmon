@@ -22,7 +22,11 @@ func (c Config) Run() Results {
 func (c Check) Run() Result {
 	result := Result{Hostname: c.Hostname, Endpoints: make(map[string]IndividualResult), Timestamp: time.Now()}
 	for _, endpoint := range c.Endpoints {
+		result.Status = "ok"
 		result.Endpoints[endpoint] = checkEndpoint(c.Hostname, endpoint, c.Warning, c.Critical)
+		if result.Endpoints[endpoint].Status != "ok" {
+			result.Status = result.Endpoints[endpoint].Status
+		}
 	}
 	return result
 }
