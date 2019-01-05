@@ -54,6 +54,21 @@ func handleResult(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
+func handleStatus(w http.ResponseWriter, r *http.Request) {
+	status := results.Summary
+	scheme := "http://"
+	if r.TLS != nil {
+		scheme = "https://"
+	}
+
+	if status != "All Certs OK" {
+		status = "Some https certificates will be expired; please check <a href=\"" + scheme + r.Host + "\">" + scheme + r.Host + "</a> to see details"
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte(status))
+}
+
 func runtest(config certmon.Config) {
 	log.Println("Running tests")
 	results = config.Run()
@@ -79,6 +94,7 @@ func main() {
 		log.Fatal(err)
 	}
 	http.HandleFunc("/results/", handleResult)
+	http.HandleFunc("/status/", handleStatus)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, *htmlFile)
 	})
